@@ -1,5 +1,12 @@
-<form [formGroup]="form" (ngSubmit)="onSubmit()">
-  <div *ngFor="let field of config.schema">
+<div>
+  <label for="formSelector">Select Form:</label>
+  <select id="formSelector" (change)="selectForm($event)">
+    <option *ngFor="let form of config; let i = index" [value]="i">{{ form.formName }}</option>
+  </select>
+</div>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="selectedConfig">
+  <div *ngFor="let field of selectedConfig.schema">
     <label [for]="field.key">{{ field.label }}</label>
     <input *ngIf="field.type !== 'textarea'" [id]="field.key" [type]="field.type" [formControlName]="field.key">
     <textarea *ngIf="field.type === 'textarea'" [id]="field.key" [formControlName]="field.key"></textarea>
