@@ -1,9 +1,8 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
-  <div *ngFor="let field of formSchema">
-    <mat-form-field appearance="fill">
-      <mat-label>{{ field.label }}</mat-label>
-      <input matInput [formControlName]="field.name" [type]="field.type">
-    </mat-form-field>
+  <div *ngFor="let field of config.schema">
+    <label [for]="field.key">{{ field.label }}</label>
+    <input *ngIf="field.type !== 'textarea'" [id]="field.key" [type]="field.type" [formControlName]="field.key">
+    <textarea *ngIf="field.type === 'textarea'" [id]="field.key" [formControlName]="field.key"></textarea>
   </div>
-  <button mat-raised-button color="primary" type="submit">Submit</button>
+  <button type="submit">Submit</button>
 </form>

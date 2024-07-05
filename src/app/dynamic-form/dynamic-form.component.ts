@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { FormService } from '../form.service';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
+import { apiConfig } from '../api-config';
 
 @Component({
   selector: 'app-dynamic-form',
@@ -22,34 +23,32 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./dynamic-form.component.css']
 })
 export class DynamicFormComponent implements OnInit {
-  form!: FormGroup;
-  formSchema: any[] = [];
+  form: FormGroup = this.fb.group({});
+  config = apiConfig;
 
-  constructor(private fb: FormBuilder, private formService: FormService) {}
+  constructor(private fb: FormBuilder, private http: HttpClient) {}
 
   ngOnInit(): void {
-    const apiUrl = 'https://jsonplaceholder.typicode.com/posts'; // Mock API for testing
-    this.formService.getFormSchema(apiUrl).subscribe(
-      schema => {
-        this.formSchema = schema;
-        this.createForm();
-      },
-      error => {
-        console.error('API error:', error);
-        // Handle the error accordingly
-      }
-    );
+    this.form = this.createFormGroup(this.config.schema);
+    this.loadData();
   }
 
-  createForm() {
-    const formGroup: { [key: string]: any } = {};
-    this.formSchema.forEach(field => {
-      formGroup[field.name] = [field.value || '', Validators.required];
+  createFormGroup(schema: any[]): FormGroup {
+    const group: any = {};
+    schema.forEach(field => {
+      group[field.key] = ['', field.required ? Validators.required : null];
     });
-    this.form = this.fb.group(formGroup);
+    return this.fb.group(group);
+  }
+
+  loadData(): void {
+    this.http.get<any>(this.config.url).subscribe(data => {
+      this.form.patchValue(data[0]); // Assuming you're dealing with an array and using the first item
+    });
   }
 
   onSubmit() {
-    console.log(this.form.value);
+    console.log('Form Submitted', this.form.value);
   }
+  
 }
