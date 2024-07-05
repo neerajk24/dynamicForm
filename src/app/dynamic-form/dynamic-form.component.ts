@@ -19,8 +19,7 @@ import { CommonModule } from '@angular/common';
     MatButtonModule
   ],
   templateUrl: './dynamic-form.component.html',
-  styleUrls: ['./dynamic-form.component.css'],
-  providers: [FormService]
+  styleUrls: ['./dynamic-form.component.css']
 })
 export class DynamicFormComponent implements OnInit {
   form!: FormGroup;
@@ -29,11 +28,17 @@ export class DynamicFormComponent implements OnInit {
   constructor(private fb: FormBuilder, private formService: FormService) {}
 
   ngOnInit(): void {
-    const apiUrl = 'https://example.com/api/form-schema';
-    this.formService.getFormSchema(apiUrl).subscribe(schema => {
-      this.formSchema = schema;
-      this.createForm();
-    });
+    const apiUrl = 'https://jsonplaceholder.typicode.com/posts'; // Mock API for testing
+    this.formService.getFormSchema(apiUrl).subscribe(
+      schema => {
+        this.formSchema = schema;
+        this.createForm();
+      },
+      error => {
+        console.error('API error:', error);
+        // Handle the error accordingly
+      }
+    );
   }
 
   createForm() {

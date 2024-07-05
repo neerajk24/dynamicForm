@@ -1,10 +1,9 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
-    <div *ngFor="let field of formSchema">
-      <mat-form-field appearance="fill">
-        <mat-label>{{ field.label }}</mat-label>
-        <input matInput [formControlName]="field.name" [type]="field.type">
-      </mat-form-field>
-    </div>
-    <button mat-raised-button color="primary" type="submit">Submit</button>
-  </form>
-  
+  <div *ngFor="let field of formSchema">
+    <mat-form-field appearance="fill">
+      <mat-label>{{ field.label }}</mat-label>
+      <input matInput [formControlName]="field.name" [type]="field.type">
+    </mat-form-field>
+  </div>
+  <button mat-raised-button color="primary" type="submit">Submit</button>
+</form>
