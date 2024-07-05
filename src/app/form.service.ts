@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root'  // Ensures service is provided at the root level
 })
 export class FormService {
   constructor(private http: HttpClient) {}
