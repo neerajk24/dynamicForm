@@ -3,10 +3,21 @@ import json
 
 # Configuration
 swagger_url = 'https://petstore.swagger.io/v2/swagger.json'
-api_url = 'https://petstore.swagger.io/v2/pet'
 output_js_file = 'D:/Repo/DynamicForm/dynamic-form-app/src/app/api-config.ts'
-path = '/pet'
-method = 'post'
+
+# List of API paths and methods to process
+api_configs = [
+    {
+        'url': 'https://petstore.swagger.io/v2/pet',
+        'path': '/pet',
+        'method': 'post'
+    },
+    {
+        'url': 'https://petstore.swagger.io/v2/store/order',
+        'path': '/store/order',
+        'method': 'post'
+    }
+]
 
 # Fetch the Swagger documentation
 response = requests.get(swagger_url)
@@ -67,36 +78,38 @@ def convert_schema(swagger_schema, swagger_json):
             })
     return api_schema
 
-# Extract the schema
-swagger_schema = extract_schema(swagger_json, path, method)
-
-# Resolve references and convert to apiConfig format
-if swagger_schema:
-    if '$ref' in swagger_schema:
-        swagger_schema = resolve_ref(swagger_schema['$ref'], swagger_json)
-    api_schema = convert_schema(swagger_schema, swagger_json)
-else:
-    print("Schema not found.")
-    api_schema = []
-
 # Read the JavaScript file
 with open(output_js_file, 'r') as file:
     js_content = file.readlines()
 
-# Update the apiConfig with new schema
-new_form_config = f"""{{
-        formName: 'Form from Swagger',
-        url: '{api_url}',
-        schema: {json.dumps(api_schema, indent=2)}
-    }}"""
+# Process each API config
+for api_config in api_configs:
+    # Extract the schema
+    swagger_schema = extract_schema(swagger_json, api_config['path'], api_config['method'])
 
-# Find the position to insert the new config (before the last closing bracket)
-insert_position = len(js_content) - 1
-while not js_content[insert_position].strip().endswith('];'):
-    insert_position -= 1
+    # Resolve references and convert to apiConfig format
+    if swagger_schema:
+        if '$ref' in swagger_schema:
+            swagger_schema = resolve_ref(swagger_schema['$ref'], swagger_json)
+        api_schema = convert_schema(swagger_schema, swagger_json)
+    else:
+        print(f"Schema not found for {api_config['url']}.")
+        api_schema = []
 
-# Insert the new config
-js_content.insert(insert_position, f"    {new_form_config},\n")
+    # Update the apiConfig with new schema
+    new_form_config = f"""{{
+            formName: 'Form from Swagger for {api_config['url']}',
+            url: '{api_config['url']}',
+            schema: {json.dumps(api_schema, indent=2)}
+        }}"""
+
+    # Find the position to insert the new config (before the last closing bracket)
+    insert_position = len(js_content) - 1
+    while not js_content[insert_position].strip().endswith('];'):
+        insert_position -= 1
+
+    # Insert the new config
+    js_content.insert(insert_position, f"    {new_form_config},\n")
 
 # Write back the updated content
 with open(output_js_file, 'w') as file:
