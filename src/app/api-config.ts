@@ -20,5 +20,117 @@ export const apiConfig = [
         { key: 'avatar', type: 'text', label: 'Avatar URL', required: false }
       ]
     },
+    {
+        formName: 'Form from Swagger',
+        url: 'https://petstore.swagger.io/v2/pet',
+        schema: [
+  {
+    "key": "id",
+    "type": "number",
+    "label": "Id",
+    "required": false
+  },
+  {
+    "key": "category",
+    "type": "object",
+    "label": "Category",
+    "required": false,
+    "properties": [
+      {
+        "key": "id",
+        "type": "number",
+        "label": "Id",
+        "required": false
+      },
+      {
+        "key": "name",
+        "type": "string",
+        "label": "Name",
+        "required": false
+      }
+    ]
+  },
+  {
+    "key": "name",
+    "type": "string",
+    "label": "Name",
+    "required": true
+  },
+  {
+    "key": "photoUrls",
+    "type": "array",
+    "label": "Photourls",
+    "required": true
+  },
+  {
+    "key": "tags",
+    "type": "array",
+    "label": "Tags",
+    "required": false
+  },
+  {
+    "key": "status",
+    "type": "string",
+    "label": "Status",
+    "required": false
+  }
+]
+    },
+    {
+        formName: 'Form from Swagger',
+        url: 'https://petstore.swagger.io/v2/pet',
+        schema: [
+  {
+    "key": "id",
+    "type": "number",
+    "label": "Id",
+    "required": false
+  },
+  {
+    "key": "category",
+    "type": "object",
+    "label": "Category",
+    "required": false,
+    "properties": [
+      {
+        "key": "id",
+        "type": "number",
+        "label": "Id",
+        "required": false
+      },
+      {
+        "key": "name",
+        "type": "string",
+        "label": "Name",
+        "required": false
+      }
+    ]
+  },
+  {
+    "key": "name",
+    "type": "string",
+    "label": "Name",
+    "required": true
+  },
+  {
+    "key": "photoUrls",
+    "type": "array",
+    "label": "Photourls",
+    "required": true
+  },
+  {
+    "key": "tags",
+    "type": "array",
+    "label": "Tags",
+    "required": false
+  },
+  {
+    "key": "status",
+    "type": "string",
+    "label": "Status",
+    "required": false
+  }
+]
+    },
   ];
   

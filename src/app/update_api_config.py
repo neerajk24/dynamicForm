@@ -1,10 +1,10 @@
 import requests
 import json
 
-# URL to fetch the Swagger JSON
+# Configuration
 swagger_url = 'https://petstore.swagger.io/v2/swagger.json'
-
-# Path and method to extract schema for
+api_url = 'https://petstore.swagger.io/v2/pet'
+output_js_file = 'D:/Repo/DynamicForm/dynamic-form-app/src/app/api-config.ts'
 path = '/pet'
 method = 'post'
 
@@ -24,8 +24,16 @@ def extract_schema(swagger_json, path, method):
         print(f"KeyError: {e} - Path or method might not be correct.")
         return None
 
+# Function to resolve schema references
+def resolve_ref(ref, swagger_json):
+    keys = ref.replace('#/', '').split('/')
+    schema = swagger_json
+    for key in keys:
+        schema = schema[key]
+    return schema
+
 # Function to convert Swagger schema to apiConfig schema format
-def convert_schema(swagger_schema):
+def convert_schema(swagger_schema, swagger_json):
     properties = swagger_schema.get('properties', {})
     required = swagger_schema.get('required', [])
     api_schema = []
@@ -39,35 +47,46 @@ def convert_schema(swagger_schema):
             field_type = 'array'
         elif field_type == 'object':
             field_type = 'object'
-        api_schema.append({
-            'key': key,
-            'type': field_type,
-            'label': key.capitalize(),
-            'required': key in required
-        })
+        # Handle nested references
+        if '$ref' in value:
+            nested_schema = resolve_ref(value['$ref'], swagger_json)
+            nested_properties = convert_schema(nested_schema, swagger_json)
+            api_schema.append({
+                'key': key,
+                'type': 'object',
+                'label': key.capitalize(),
+                'required': key in required,
+                'properties': nested_properties
+            })
+        else:
+            api_schema.append({
+                'key': key,
+                'type': field_type,
+                'label': key.capitalize(),
+                'required': key in required
+            })
     return api_schema
 
 # Extract the schema
 swagger_schema = extract_schema(swagger_json, path, method)
 
-# Convert to apiConfig format
+# Resolve references and convert to apiConfig format
 if swagger_schema:
-    api_schema = convert_schema(swagger_schema)
+    if '$ref' in swagger_schema:
+        swagger_schema = resolve_ref(swagger_schema['$ref'], swagger_json)
+    api_schema = convert_schema(swagger_schema, swagger_json)
 else:
     print("Schema not found.")
     api_schema = []
 
-# Path to the JavaScript file (update this path to the correct one)
-js_file = 'D:/Repo/DynamicForm/dynamic-form-app/src/app/api-config.ts'
-
 # Read the JavaScript file
-with open(js_file, 'r') as file:
+with open(output_js_file, 'r') as file:
     js_content = file.readlines()
 
 # Update the apiConfig with new schema
 new_form_config = f"""{{
         formName: 'Form from Swagger',
-        url: 'https://petstore.swagger.io/v2/pet',
+        url: '{api_url}',
         schema: {json.dumps(api_schema, indent=2)}
     }}"""
 
@@ -80,7 +99,7 @@ while not js_content[insert_position].strip().endswith('];'):
 js_content.insert(insert_position, f"    {new_form_config},\n")
 
 # Write back the updated content
-with open(js_file, 'w') as file:
+with open(output_js_file, 'w') as file:
     file.writelines(js_content)
 
 print("apiConfig updated successfully.")
