@@ -55,6 +55,7 @@ def convert_schema(swagger_schema, swagger_json):
         elif field_type == 'boolean':
             field_type = 'dropdown'
             options = ['true', 'false']
+            default_value = 'false'
         elif field_type == 'string' and 'format' in value and value['format'] == 'email':
             field_type = 'email'
         elif field_type == 'array':
@@ -73,14 +74,16 @@ def convert_schema(swagger_schema, swagger_json):
                 'properties': nested_properties
             })
         else:
-            api_schema.append({
+            field_schema = {
                 'key': key,
                 'type': field_type,
                 'label': key.capitalize(),
                 'required': key in required
-            })
+            }
             if field_type == 'dropdown':
-                api_schema[-1]['options'] = options
+                field_schema['options'] = options
+                field_schema['default'] = default_value
+            api_schema.append(field_schema)
     return api_schema
 
 # Read the JavaScript file

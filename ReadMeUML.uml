@@ -1,0 +1,40 @@
+@startuml
+
+skinparam rectangle {
+    BackgroundColor<<internal>> Wheat
+    BackgroundColor<<external>> LightBlue
+}
+
+package "Dynamic Form Application" {
+    rectangle Angular {
+        component [Angular Application]
+        component [Dynamic Form Component] <<internal>>
+    }
+    rectangle API {
+        database "API Configurations" <<external>>
+        component [API Config Module] <<internal>>
+    }
+    rectangle Scripts {
+        file [Python Script] <<external>>
+    }
+    [Swagger Documentation] <<external>>
+}
+
+[Angular Application] --> [Dynamic Form Component] : Generates forms using
+[Dynamic Form Component] --> [API Config Module] : Fetches configuration from
+[Python Script] --> [API Configurations] : Updates
+[API Configurations] --> [API Config Module] : Used by
+[Swagger Documentation] --> [Python Script] : Fetches definitions from
+
+[Python Script] ..> [API Config Module] : Translates and\nupdates schema
+[API Config Module] ..> [Dynamic Form Component] : Provides schema for\nform generation
+
+note right of [Python Script]
+Fetches Swagger API documentation and parses it to update the schema configurations dynamically.
+end note
+
+note right of [Dynamic Form Component]
+Dynamically generated forms based on updated API configurations and schema.
+end note
+
+@enduml
