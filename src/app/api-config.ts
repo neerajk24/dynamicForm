@@ -20,34 +20,5 @@ export const apiConfig = [
         { key: 'avatar', type: 'text', label: 'Avatar URL', required: false }
       ]
     },
-    {
-        formName: 'Form 3',
-        url: 'https://reqres.in/api/users',
-        schema: [
-          { key: 'id', type: 'number', label: 'ID', required: true },
-          { key: 'email', type: 'email', label: 'Email', required: true },        
-          { key: 'last_name', type: 'text', label: 'Last Name', required: true },
-          { key: 'avatar', type: 'text', label: 'Avatar URL', required: false }
-        ]
-      },
-      {
-        formName: 'Form 4',
-        url: 'https://reqres.in/api/users',
-        schema: [
-          { key: 'id', type: 'number', label: 'ID', required: true },
-          { key: 'email', type: 'email', label: 'Email', required: true },        
-          { key: 'avatar', type: 'text', label: 'Avatar URL', required: false }
-        ]
-      },
-    {
-        formName: 'Form from Swagger',
-        url: 'https://petstore.swagger.io/v2/pet',
-        schema: []
-    },
-    {
-        formName: 'Form from Swagger',
-        url: 'https://petstore.swagger.io/v2/pet',
-        schema: []
-    },
   ];
   
