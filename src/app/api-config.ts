@@ -38,6 +38,16 @@ export const apiConfig = [
           { key: 'email', type: 'email', label: 'Email', required: true },        
           { key: 'avatar', type: 'text', label: 'Avatar URL', required: false }
         ]
-      }
+      },
+    {
+        formName: 'Form from Swagger',
+        url: 'https://petstore.swagger.io/v2/pet',
+        schema: []
+    },
+    {
+        formName: 'Form from Swagger',
+        url: 'https://petstore.swagger.io/v2/pet',
+        schema: []
+    },
   ];
   
