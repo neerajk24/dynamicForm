@@ -52,6 +52,9 @@ def convert_schema(swagger_schema, swagger_json):
         field_type = value.get('type', 'string')
         if field_type == 'integer':
             field_type = 'number'
+        elif field_type == 'boolean':
+            field_type = 'dropdown'
+            options = ['true', 'false']
         elif field_type == 'string' and 'format' in value and value['format'] == 'email':
             field_type = 'email'
         elif field_type == 'array':
@@ -76,6 +79,8 @@ def convert_schema(swagger_schema, swagger_json):
                 'label': key.capitalize(),
                 'required': key in required
             })
+            if field_type == 'dropdown':
+                api_schema[-1]['options'] = options
     return api_schema
 
 # Read the JavaScript file
